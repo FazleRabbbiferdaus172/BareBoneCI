@@ -99,3 +99,5 @@ ENV/
 
 # Windows
 Thumbs.db
+
+test_repo_clone_obs/
