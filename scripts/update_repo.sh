@@ -2,7 +2,7 @@
 
 source ./run_or_fail.sh
 
-run_or_fail "I failed" rm commit_hash.txt
+run_or_fail "I failed" rm -f commit_hash.txt
 
 run_or_fail "Repo Location not found" pushd $1 1> /dev/null # 1> /dev/null removes the output of pushd
 
@@ -21,5 +21,5 @@ run_or_fail "directory change failed" popd 1> /dev/null
 
 if [ $LATEST_COMMIT_ID != $COMMIT_ID ]
 then
-    echo 'I am new' > commit_hash.txt
+    echo $LATEST_COMMIT_ID > commit_hash.txt
 fi
