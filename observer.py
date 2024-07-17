@@ -1,5 +1,6 @@
 import subprocess
 import socket
+import os
 
 from utils.os_helppers import get_bash_script_command_with_repo, get_bash_script_only_command
 
@@ -19,7 +20,7 @@ def reach_dispathcer():
     client_socket.close()
 
 # The observer will poll the repository periodically
-while True:
+while 1 == 0:
     # check for changes in the git repo
     # If changes are found latest commit id is written to a file
     try:
@@ -29,6 +30,13 @@ while True:
     except Exception as e:
         raise Exception(str(e))
     
-    reach_dispathcer()
+    if os.path.isfile('./scripts/commit_hash.txt'):
+        with open('./scripts/commit_hash.txt', 'r') as f:
+            commit_id = f.readline()
+            reach_dispathcer()
+    
+
+
+reach_dispathcer()
 
 
