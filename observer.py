@@ -37,18 +37,18 @@ while 1 == 0:
             commit_id = f.readline()
             reach_dispathcer()
     
-new_server = ForkServer(
-            server_host = "localhost", server_port = 8888
-        )
-new_server_2 = ForkServer(
-            server_host = "localhost", server_port = 8889
-        )
-new_server_3 = ForkServer(
-            server_host = "localhost", server_port = 8890
-        )
+# new_server = ForkServer(
+#             server_host = "localhost", server_port = 8888
+#         )
+# new_server_2 = ForkServer(
+#             server_host = "localhost", server_port = 8889
+#         )
+# new_server_3 = ForkServer(
+#             server_host = "localhost", server_port = 8890
+#         )
 
-# reach_dispathcer(8888)
-# reach_dispathcer(8889)
-# reach_dispathcer(8890)
+reach_dispathcer(8888)
+reach_dispathcer(8889)
+reach_dispathcer(8890)
 
 
