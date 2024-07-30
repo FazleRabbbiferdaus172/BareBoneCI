@@ -4,9 +4,11 @@ import os
 
 class ForkServer:
 
-    def __init__(self, server_host, server_port):
+    def __init__(self, server_host, server_port, process_request=False):
         self.server_host = server_host
         self.server_port = int(server_port)
+        if callable(process_request):
+            self.process_request = process_request
         self.server_socket = self._initialize_server()
         # self.start_serving()
 
@@ -27,7 +29,7 @@ class ForkServer:
                             self.server_socket.close()
                             request_msg = self._receive_request(
                                                         clientsocket_connection)
-                            response_msg = self.process_request(request_msg)
+                            response_msg = self.process_request(self, request_msg)
                             self._send_response(
                                                         clientsocket_connection, response_msg)
                             break
@@ -45,7 +47,8 @@ class ForkServer:
                 break
         return request_msg.strip()
 
-    def process_request(self, request_msg):
+    @staticmethod
+    def process_request(server, request_msg):
         response_msg = "pong"
         return response_msg
 
@@ -57,13 +60,13 @@ class ForkServer:
 
 if __name__ == '__main__':
     new_server = ForkServer(
-            server_host = "localhost", server_port = 8888
+            server_host = "localhost", server_port = 8888, process_request = lambda request_msg: "new server pong"
         )
     new_server_2 = ForkServer(
-            server_host = "localhost", server_port = 8889
+            server_host = "localhost", server_port = 8889, process_request = lambda request_msg: "new server 2 pong"
         )
     new_server_3 = ForkServer(
-            server_host = "localhost", server_port = 8890
+            server_host = "localhost", server_port = 8890, process_request = lambda request_msg: "new server 3 pong"
         )
     main_pid = os.fork()
     if main_pid == 0:
