@@ -1,4 +1,5 @@
 import os
+import threading
 
 from dummy_socket_server import ForkServer
 
@@ -32,11 +33,29 @@ def request_handler(server, request_msg):
         response_msg = 'bro'
     return response_msg
 
-dispatcher_server = ForkServer(dispatcher_host, dispatcher_port, request_handler)
+dispatcher_server = DispatcherForkServer(dispatcher_host, dispatcher_port, request_handler)
+
+def dispatch_tests(server, commit_id):
+    server.add_to_dispatched_commits(commit_id, 1)
+    server.remove_from_pending_commits(commit_id)
+
+def redistribute(server):
+    while True:
+        for commit_id in server.pending_commits:
+            print("Before dispatch, pending commits: {}".format(server.pending_commits))
+            print("Before dispatch, dispatched commits: {}".format(server.dispatched_commits))
+            dispatch_tests(server, commit_id)
+            print("After dispatch, pending commits: {}".format(server.pending_commits))
+            print("After dispatch, dispatched commits: {}".format(server.dispatched_commits))
+
+redistributor_thread = threading.Thread(target=redistribute, args=[dispatcher_server])
 
 child_pid = os.fork()
-
 if child_pid == 0:
+    try:
+        redistributor_thread.start()
+    except KeyboardInterrupt:
+        redistributor_thread.join()
     dispatcher_server.start_serving()
 
 if child_pid > 0:
