@@ -101,3 +101,5 @@ ENV/
 Thumbs.db
 
 test_repo_clone_obs/
+test_repo_clone_test_runner/
+results
