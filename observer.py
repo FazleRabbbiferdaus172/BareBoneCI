@@ -26,12 +26,11 @@ if __name__ == '__main__':
         if os.path.isfile('./scripts/commit_hash.txt'):
             with open('./scripts/commit_hash.txt', 'r') as f:
                 commit_id = f.readline()
-            response = communicate(dispatcher_host, dispatcher_port, 'dispatch: {}'.format(commit_id))
+            response = communicate(dispatcher_host, dispatcher_port, 'dispatch:{}'.format(commit_id))
             if response == 'ok':
                 print('Dispatched commit {}'.format(commit_id))
             else:
                 raise Exception("Could not dispatch commit {}".format(commit_id))
-        communicate(dispatcher_host, dispatcher_port, 'dispatch: {}'.format('hi'))
         time.sleep(5)
 
 
