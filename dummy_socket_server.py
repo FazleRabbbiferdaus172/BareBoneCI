@@ -29,9 +29,10 @@ class ForkServer:
                             self.server_socket.close()
                             request_msg = self._receive_request(
                                                         clientsocket_connection)
-                            response_msg = self.process_request(self, request_msg)
-                            self._send_response(
-                                                        clientsocket_connection, response_msg)
+                            response_msg = self.process_request(self, request_msg, clientsocket_connection)
+                            if response_msg:
+                                self._send_response(
+                                                            clientsocket_connection, response_msg)
                             break
 
     @staticmethod

@@ -19,26 +19,30 @@ command_re = re.compile(r"(\w+)(:.+)*")
 
 def run_tests(commit_id):
     print("running test {}".format(commit_id))
-    response_msg = "yo"
+    request_msg = "results:{}:{}:{}".format(commit_id, 6, "tested")
     try:
         output = subprocess.run(['bash', 'runner.sh', '../test_repo_clone_test_runner', commit_id], cwd='./scripts', capture_output=True, text=True, check=True)
     except subprocess.CalledProcessError as e:
         raise Exception(e.stderr)
     except Exception as e:
         raise Exception(str(e))
-    try:
-        suite = unittest.TestLoader().discover(repo_src)
-        result_file = open("results", "w")
-        unittest.TextTestResult(result_file).run(suite)
-        result_file.close()
-        result_file = open("results", "r")
-        response_msg = result_file.read()
-        print(response_msg)
-    except:
-        return response_msg
-    return response_msg
+    # try:
+    suite = unittest.TestLoader().discover(repo_src)
+    with open("results.txt", "w") as result_file:
+        runner = unittest.TextTestRunner(stream=result_file, descriptions=True, verbosity=2)
+        runner.run(suite)
+    with open("results.txt", "r") as result_file:
+        output = result_file.read()
+    print(output)
+    request_msg = "results:{}:{}:{}".format(commit_id, len(output), output)
+    # except Exception:
+    #     print(Exception)
+    #     request_msg = "results:{}:{}:{}".format(commit_id, 13, "failed to run")
+    response = communicate(dispatcher_host, dispatcher_port, request_msg)
+    if response == "ok":
+        print("result successfully received by dispatcher")
 
-def request_handler(server, request_msg):
+def request_handler(server, request_msg, clientsocket_connection):
     response_msg = 'Invalid command'
     command_groups = command_re.match(request_msg)
     if not command_groups:
@@ -48,7 +52,13 @@ def request_handler(server, request_msg):
         response_msg = 'Test ran'
     elif command == 'runtest':
         commit_id = re.findall(r':(\w*)',command_groups.group(2))
-        response_msg = run_tests(commit_id[0])
+        server._send_response(clientsocket_connection, "ok")
+        response_msg = False
+        run_tests(commit_id[0])
+    elif command == 'ping':
+        response_msg = 'pong'
+    else:
+        response_msg = "Nani!? invvalid"
     return response_msg
 
 runner_server = ForkServer(runner_host, runner_port, request_handler)
