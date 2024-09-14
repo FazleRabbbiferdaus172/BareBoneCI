@@ -1,7 +1,3 @@
-Here's the proofread and corrected version of your text:
-
----
-
 # BareBoneCi is a minimal Continuous Integration System.
 
 The initial plan was to follow [500 Lines or Less: A Continuous Integration System](https://aosabook.org/en/500L/a-continuous-integration-system.html), but deviated a lot.
